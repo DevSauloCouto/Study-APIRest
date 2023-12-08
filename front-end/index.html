@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja de Games</title>
+</head>
+<body>
+    
+    <h1>Bem-vindos a Loja de Games</h1>
+    <hr>
+    <h3>Games</h3>
+    <p>Game | Ano | Preço</p>
+    <ul id="games"></ul>
+    <hr>
+    <h3>Cadastrar Game</h3>
+    <input type="text" name="nameGame" id="nameGame" placeholder="Name"><br>
+    <input type="number" name="yearGame" id="yearGame" placeholder="Year"><br>
+    <input type="number" name="priceGame" id="priceGame" placeholder="Price"><br>
+    <button type="button" onclick="createGame()">Criar</button>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+    async function createGame(){
+        const nameGame = document.getElementById("nameGame");
+        const yearGame = document.getElementById("yearGame");
+        const priceGame = document.getElementById("priceGame");
+
+        const jsonGames = {
+            name: nameGame.value,
+            year: yearGame.value,
+            price: priceGame.value
+        };
+
+        try{
+            const create = await axios.post("http://localhost:4343/game", jsonGames);
+            
+            alert("Game cadastrado com sucesso");
+
+            console.log(create);
+        }catch(e){
+            const { data } = e.response;
+
+            alert("Preencha todos os campos");
+
+            console.log(data.message);
+        }
+        
+    }
+
+    async function deleteGame(item){
+        const id = item.getAttribute("data-id");
+        try{
+            const del = await axios.delete(`http://localhost:4343/game/${id}`);
+
+            const { message } = del.data;
+
+            alert(message);
+        }catch(e){
+            const { message } = e.data;
+            alert(message);
+        }
+    }
+
+    async function list(){
+        try{
+            const response = await axios.get("http://localhost:4343/games");
+            const { data } = response;
+            const listGames = document.getElementById("games");
+
+            data.forEach(game => {
+                const itemGame = document.createElement("li");
+                itemGame.innerHTML = `${game.name} | ${game.year} | ${game.price}`;
+                itemGame.setAttribute("data-id", game.id);
+
+                const btnDel = document.createElement("button");
+                btnDel.innerHTML = "Apagar";
+
+                itemGame.appendChild(btnDel);
+
+                btnDel.addEventListener("click", () => {
+                    deleteGame(itemGame);
+                })
+
+                listGames.appendChild(itemGame);
+            });
+
+            console.log(data);
+        }catch(e){
+            console.log(e);
+        }
+    }
+    list();
+
+</script>
+</html>
