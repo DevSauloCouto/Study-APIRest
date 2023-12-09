@@ -18,6 +18,13 @@
     <input type="number" name="yearGame" id="yearGame" placeholder="Year"><br>
     <input type="number" name="priceGame" id="priceGame" placeholder="Price"><br>
     <button type="button" onclick="createGame()">Criar</button>
+    <hr>
+    <h3>Editar Game</h3>
+    <input type="text" name="idEdit" id="idEdit" placeholder="ID" readonly><br>
+    <input type="text" name="nameEdit" id="nameEdit" placeholder="Name"><br>
+    <input type="number" name="yearEdit" id="yearEdit" placeholder="Year"><br>
+    <input type="number" name="priceEdit" id="priceEdit" placeholder="Price"><br>
+    <button type="button" onclick="updateGame()">Editar</button>
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -50,6 +57,35 @@
         
     }
 
+    async function updateGame(){
+
+        const idInput = document.getElementById("idEdit");
+        const nameGame = document.getElementById("nameEdit");
+        const yearGame = document.getElementById("yearEdit");
+        const priceGame = document.getElementById("priceEdit");
+
+        const jsonGames = {
+            name: nameGame.value,
+            year: yearGame.value,
+            price: priceGame.value
+        };
+
+        try{
+            const update = await axios.put(`http://localhost:4343/game/${idInput.value}`, jsonGames);
+            
+            alert("Game atualizado com sucesso");
+
+            console.log(update);
+        }catch(e){
+            const { data } = e.response;
+
+            alert("Erro ao atualizar o Game");
+
+            console.log(data.message);
+        }
+        
+    }
+
     async function deleteGame(item){
         const id = item.getAttribute("data-id");
         try{
@@ -62,6 +98,22 @@
             const { message } = e.data;
             alert(message);
         }
+    }
+
+    function loadForm(item){
+        const id = item.getAttribute("data-id");
+
+        const textItem = item.textContent;
+
+        const name = textItem.substring(0, textItem.indexOf("|") - 1);
+        const year = textItem.substring(textItem.indexOf("|") + 2, textItem.lastIndexOf("|") - 1);
+        const price = textItem.substring(textItem.lastIndexOf("|") + 2, item.innerHTML.indexOf("<"));
+        
+        document.getElementById("idEdit").value = id;
+        document.getElementById("nameEdit").value = name;
+        document.getElementById("yearEdit").value = year;
+        document.getElementById("priceEdit").value = price;
+        
     }
 
     async function list(){
@@ -82,6 +134,15 @@
 
                 btnDel.addEventListener("click", () => {
                     deleteGame(itemGame);
+                })
+
+                const editBtn = document.createElement("button");
+                editBtn.innerHTML = "Editar";
+
+                itemGame.appendChild(editBtn);
+
+                editBtn.addEventListener("click", () => {
+                    loadForm(itemGame);
                 })
 
                 listGames.appendChild(itemGame);
