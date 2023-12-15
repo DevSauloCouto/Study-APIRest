@@ -6,6 +6,11 @@
     <title>Loja de Games</title>
 </head>
 <body>
+
+    <h3>LOGIN</h3>
+    <input type="text" name="email" id="emailLogin" placeholder="Email">
+    <input type="text" name="password" id="passwordLogin" placeholder="Senha">
+    <button onclick="loginAuth()">Entrar</button>
     
     <h1>Bem-vindos a Loja de Games</h1>
     <hr>
@@ -30,6 +35,40 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 
+    const axiosConfig = {
+        headers: {
+            Authorization: "Bearer " + localStorage.getItem('tk')
+        }
+    }
+
+    async function loginAuth(){
+        const email = document.getElementById("emailLogin");
+        const pass = document.getElementById("passwordLogin");
+
+        const userLogin = {
+            email: email.value,
+            pass: pass.value
+        }
+        
+        try {
+            const login = await axios.post("http://localhost:4343/auth", userLogin);
+
+            const token = login.data.token;
+
+            localStorage.setItem("tk", token);
+            axiosConfig.headers.Authorization = "Bearer " + localStorage.getItem('tk');
+
+            alert("Login Sucess");
+        } catch(e){
+            if(!e.response.data.err){
+                alert(e.response.data.message);
+            } else {
+                alert(e.response.data.err);
+            }
+            console.log(e.response.data);
+        }
+    }
+
     async function createGame(){
         const nameGame = document.getElementById("nameGame");
         const yearGame = document.getElementById("yearGame");
@@ -42,7 +81,7 @@
         };
 
         try{
-            const create = await axios.post("http://localhost:4343/game", jsonGames);
+            const create = await axios.post("http://localhost:4343/game", jsonGames, axiosConfig);
             
             alert("Game cadastrado com sucesso");
 
@@ -71,7 +110,7 @@
         };
 
         try{
-            const update = await axios.put(`http://localhost:4343/game/${idInput.value}`, jsonGames);
+            const update = await axios.put(`http://localhost:4343/game/${idInput.value}`, jsonGames, axiosConfig);
             
             alert("Game atualizado com sucesso");
 
@@ -89,7 +128,7 @@
     async function deleteGame(item){
         const id = item.getAttribute("data-id");
         try{
-            const del = await axios.delete(`http://localhost:4343/game/${id}`);
+            const del = await axios.delete(`http://localhost:4343/game/${id}`, axiosConfig);
 
             const { message } = del.data;
 
@@ -118,7 +157,7 @@
 
     async function list(){
         try{
-            const response = await axios.get("http://localhost:4343/games");
+            const response = await axios.get("http://localhost:4343/games", axiosConfig);
             const { data } = response;
             const listGames = document.getElementById("games");
 

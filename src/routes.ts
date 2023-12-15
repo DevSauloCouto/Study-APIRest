@@ -3,7 +3,9 @@ import { ListAllGames } from "./Controllers/ListAllGames";
 import { ListGame } from "./Controllers/ListGame";
 import { CreateGame } from "./Controllers/CreateGame";
 import { DeleteGame } from "./Controllers/DeleteGame";
-import { ChangeGame } from "./Controllers/ChangeGame";
+import { AlterGame } from "./Controllers/AlterGame";
+import { GenerateToken } from "./Auth/GenerateToken";
+import { MiddlewareAuth } from "./Auth/MiddlewareAuth";
 
 export const routes = Router();
 
@@ -34,29 +36,55 @@ const json = {
             year: 2015,
             price: 40
         }
+    ],
+    users: [
+        {
+            id: "9374747972982209102",
+            name: "saulocouto",
+            email: "slcouto12@gmail.com",
+            pass: "12345"
+        },
+        {
+            id: "382382839298281",
+            name: "rklop04",
+            email: "rkloop@hotmail.com",
+            pass: "54321"
+        },
+        {
+            id: "0929038803093091",
+            name: "artur_avila",
+            email: "avila@gmail.com",
+            pass: "!@1234"
+        }
     ]
 }
+
+//Endpoint de Autenticação
+routes.post("/auth", (req: Request, res: Response) => {
+    return new GenerateToken().generate(req, res, json);
+});
+
 //Endpoint para listagem de todos os itens
-routes.get("/games", (req: Request, res: Response) => {
+routes.get("/games", MiddlewareAuth.isRequestAuth, (req: Request, res: Response) => {
     return new ListAllGames().list(req, res, json);
 });
 
 //Endpoint para listagem de um único item
-routes.get("/game/:id", (req: Request, res: Response) => {
+routes.get("/game/:id", MiddlewareAuth.isRequestAuth, (req: Request, res: Response) => {
     return new ListGame().list(req, res, json);
 });
 
 //Endpoint para criação de um item
-routes.post("/game", (req: Request, res: Response) => {
+routes.post("/game", MiddlewareAuth.isRequestAuth, (req: Request, res: Response) => {
     return new CreateGame().create(req, res, json);
 });
 
 //Endpoint para deletar um item
-routes.delete("/game/:id", (req: Request, res: Response) => {
+routes.delete("/game/:id", MiddlewareAuth.isRequestAuth, (req: Request, res: Response) => {
     return new DeleteGame().delete(req, res, json);
 });
 
 //Endpoint para alteração de um item
-routes.put("/game/:id", (req: Request, res: Response) => {
-    return new ChangeGame().change(req, res, json);
-})
+routes.put("/game/:id", MiddlewareAuth.isRequestAuth, (req: Request, res: Response) => {
+    return new AlterGame().change(req, res, json);
+});

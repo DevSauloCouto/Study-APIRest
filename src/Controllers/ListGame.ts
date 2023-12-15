@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-export class ListGame{
+export class ListGame {
 
     list(req: Request, res: Response, json: any){
         const { id } = req.params;

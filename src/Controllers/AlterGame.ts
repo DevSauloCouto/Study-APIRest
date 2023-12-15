@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-export class ChangeGame{
+export class AlterGame{
 
     change(req: Request, res: Response, json: any){
         const { id } = req.params;
