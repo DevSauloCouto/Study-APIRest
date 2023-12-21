@@ -1,14 +1,8 @@
 import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import { sign } from "jsonwebtoken";
+import { UserProps } from "../Interfaces/UserProps";
 
-interface UserProps{
-    id: string;
-    name: string;
-    email: string;
-    pass: string;
-}
-
-export class GenerateToken{
+export class GenerateToken {
 
     generate(req: Request, res: Response, json: any){
 
@@ -25,9 +19,10 @@ export class GenerateToken{
         }
 
         if(user.email === email && user.pass === pass){
+            //Isso deveria está em uma variável de ambiente
             const keySecret = "!@#SlCoutoSystemInAuthenticateJWT010100011110";
 
-            jwt.sign({id: user.id, name: user.name, email: user.email}, keySecret, {expiresIn: "24h"}, (err, token) => {
+            sign({id: user.id, name: user.name, email: user.email}, keySecret, {expiresIn: "24h"}, (err, token) => {
                 if(err){
                     return res.status(500).json({err: "Error Internal Server"});
                 }

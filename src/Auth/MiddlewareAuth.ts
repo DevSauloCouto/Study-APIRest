@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { verify } from "jsonwebtoken";
 
 
 interface PropsJWT {
@@ -8,7 +8,7 @@ interface PropsJWT {
     email: string;
 }
 
-export class MiddlewareAuth{
+export class MiddlewareAuth {
 
     static isRequestAuth(req: Request, res: Response, next: NextFunction){
         const authToken = req.headers['authorization'];
@@ -20,7 +20,7 @@ export class MiddlewareAuth{
 
         const tokenBearer = authToken.split(" ")[1];
 
-        jwt.verify(tokenBearer, keySecret, (err: any, data: PropsJWT | any) => {
+        verify(tokenBearer, keySecret, (err: any, data: PropsJWT | any) => {
             if(err){
                 return res.status(401).json({err: "Token Inválido - Acesso Não Autorizado"});
             }
