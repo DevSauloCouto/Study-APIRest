@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { JsonFicticy } from "../Interfaces/IGamesUsersRepository";
 
 interface PropsCreateGame{
     name: string,
@@ -8,7 +9,7 @@ interface PropsCreateGame{
 
 export class CreateGame{
 
-    create(req: Request, res: Response, json: any){
+    create(req: Request, res: Response, json: JsonFicticy){
         const { name, year, price }: PropsCreateGame = req.body;
 
         if(!name || !year || !price){
