@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev:server": "ts-node --transpile-only src/server.ts",
-    "start": "npx nodemon",
+    "start": "npx nodemon src/server.ts --watch 'src/' -e ts",
     "build": "npx tsc"
   },
   "keywords": [],
