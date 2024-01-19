@@ -8,7 +8,7 @@ export class Autenticator {
         const { email, pass } = req.body;
 
         if(!email && !pass) {
-            return res.status(404).json({message: "Por favor, preencha todos os campos!"});
+            return res.status(401).json({message: "Por favor, preencha todos os campos!"});
         }
 
         const user = jsonUser.find((user: IUser) => user.email === email);
