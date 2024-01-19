@@ -6,7 +6,7 @@ import { GameHATEOAS } from "../HATEOAS/GameHATEOAS";
 export class GameController {
 
     listAll(req: Request, res: Response, jsonGames: Array<IGame>){
-        const _links: Array<GameHATEOAS> = [new GameHATEOAS(`http://localhost:4343/games`, "GET", "get_all_games"), ]
+        const _links: Array<GameHATEOAS> = [new GameHATEOAS(`http://localhost:4343/games`, "GET", "get_all_games"), new GameHATEOAS(`http://localhost:4343/game`, "POST", "post_game")]
 
         jsonGames.forEach(info => {
             _links.push(new GameHATEOAS(`http://localhost:4343/game/${info.id}`, "GET", "get_game"))
